@@ -3,5 +3,5 @@ project(hashmap)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SOURCE_FILES main.c item.h item.c)
+set(SOURCE_FILES main.c item.h item.c itemlist.h itemlist.c)
 add_executable(hashmap ${SOURCE_FILES})
