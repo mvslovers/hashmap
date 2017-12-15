@@ -3,5 +3,7 @@ project(hashmap)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SOURCE_FILES main.c item.h item.c itemlist.h itemlist.c)
-add_executable(hashmap ${SOURCE_FILES})
+add_subdirectory(src)
+
+add_executable(hashmap_exec main.c ${SOURCE_FILES})
+target_link_libraries(hashmap_exec hashmap)
