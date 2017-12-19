@@ -14,7 +14,7 @@ unsigned long int digitalRoot(unsigned long int hash)
     return digitalRoot;
 }
 
-unsigned long int hash_key(char * key, size_t size)
+unsigned long int hashKey(char *key)
 {
     size_t length = strlen(key);
     unsigned int hashsum = 0;
@@ -28,8 +28,8 @@ unsigned long int hash_key(char * key, size_t size)
     hashsum /= digitalRoot(hashsum);
 
     if (hashsum < 0) {
-        hashsum *= size * -1;
+        hashsum *= -1;
     }
 
-    return hashsum % size;
+    return hashsum;
 }

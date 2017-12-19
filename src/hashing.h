@@ -17,4 +17,4 @@ unsigned long int digitalRoot(unsigned long int hash);
  *
  * @return The generate hash.
  */
-unsigned long int hash_key(char * key, size_t size);
+unsigned long int hashKey(char *key);
