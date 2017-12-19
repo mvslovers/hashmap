@@ -1,89 +1,128 @@
 #include <stdlib.h>
+#include <string.h>
 #include "hashing.h"
 #include "hashmap.h"
 
+// ====================================================================================================================
+//  NON-API UTILITY FUNCTIONS
+// ====================================================================================================================
+
 /**
- * [NON-API] Utility method for retrieving the item list and hash for a given key.
+ * [NON-API] Creates a new hashmap pair.
+ *
+ * @param hash The hash key.
+ * @param key The key.
+ * @param data The data.
+ *
+ * @return The created hashmap pair.
+ */
+HashMapPair *_hm_createPair(char *key, void *data)
+{
+    HashMapPair *pair = (HashMapPair *) malloc(sizeof(HashMapPair));
+    pair->data = data;
+    pair->key = malloc(strlen(key) + 1);
+    strcpy(pair->key, key);
+
+    return pair;
+}
+
+/**
+ * [NON-API] Comparator function used when searching a list. Compares two elements to determine equivalence.
+ *
+ * @param element The search iteration element.
+ * @param compare The search key.
+ *
+ * @return The item list, or a null pointer.
+ */
+bool _hm_bucketComparatorFunction(void *element, void *compare)
+{
+    char *searchKey = (char *) compare;
+    HashMapPair *pair = (HashMapPair *) element;
+
+    return strcmp(pair->key, searchKey) == 0;
+}
+
+/**
+ * [NON-API] Utility method for retrieving the bucket for a given hash without out-of-bounds access.
  *
  * @param hashmap The hashmap.
  * @param hash The item key hash.
  *
  * @return The item list, or a null pointer.
  */
-ItemList* hashmap__getItemList(Hashmap *hashmap, unsigned long int hash)
+Bucket *_hm_getBucket(HashMap *hashmap, char *key)
 {
-    if (hash > (hashmap->size - 1)) {
-        // Hash is out of bounds, for some reason
-        return NULL;
-    }
+    unsigned long int hash = hashKey(key);
+    unsigned long int index = hash % hashmap->size;
 
-    return &hashmap->lists[hash];
+    return &hashmap->buckets[index];
 }
 
-Hashmap *hashmap_new(size_t size)
+/**
+ * [NON-API] Utility method for retrieving a pair from the hashmap by key.
+ *
+ * @param hashmap The hashmap.
+ * @param hash The item key hash.
+ *
+ * @return The item list, or a null pointer.
+ */
+HashMapPair *_hm_getPair(HashMap *hashmap, char *key)
 {
-    Hashmap *hashmap = (Hashmap*) malloc(sizeof(Hashmap));
+    Bucket *bucket = _hm_getBucket(hashmap, key);
 
+    return listSearch(bucket, key, _hm_bucketComparatorFunction);
+}
+
+// ====================================================================================================================
+//  HASHMAP API FUNCTIONS
+// ====================================================================================================================
+
+HashMap *hashMapNew(size_t size)
+{
+    HashMap *hashmap = (HashMap *) malloc(sizeof(HashMap));
+    size_t bucketSize = sizeof(Bucket);
     hashmap->size = size;
-    hashmap->lists = calloc(size, sizeof(ItemList));
+    hashmap->buckets = calloc(size, bucketSize);
 
     return hashmap;
 }
 
-bool hashmap_set(Hashmap * hashmap, char *key, char *value)
+void *hashMapGet(HashMap *hashmap, char *key)
 {
-    unsigned long int hash = hash_key(key, hashmap->size);
-    ItemList *list = hashmap__getItemList(hashmap, hash);
+    HashMapPair *pair = _hm_getPair(hashmap, key);
 
-    if (list == NULL) {
-        return false;
-    }
+    return (pair != NULL)
+           ? pair->data
+           : NULL;
+}
 
-    // Replace value if exists
-    Item *existing = itemlist_get(list, key);
-    if (existing) {
-        existing->value = value;
+bool hashMapHas(HashMap *hashmap, char *key)
+{
+    return _hm_getPair(hashmap, key) != NULL;
+}
+
+bool hashMapSet(HashMap *hashmap, char *key, void *data)
+{
+    // Get the bucket for this hash
+    Bucket *bucket = _hm_getBucket(hashmap, key);
+    HashMapPair *pair = listSearch(bucket, key, _hm_bucketComparatorFunction);
+
+    // Pair already exists. Replace value
+    if (pair != NULL) {
+        pair->data = data;
+
         return true;
     }
 
-    // Create new Item
-    Item *item = item_new(hash, key, value);
-    // Add to list and return its success return value
-    return itemlist_add(list, item);
+    // Pair does not exist. Push to bucket
+    bool success = listPush(bucket, _hm_createPair(key, data));
+
+    return success;
 }
 
-
-char *hashmap_get(Hashmap *hashmap, char *key)
+bool hashMapDelete(HashMap *hashmap, char *key)
 {
-    unsigned long int hash = hash_key(key, hashmap->size);
-    ItemList *list = hashmap__getItemList(hashmap, hash);
+    Bucket *bucket = _hm_getBucket(hashmap, key);
 
-    if (list == NULL) {
-        return NULL;
-    }
-
-    Item *item = itemlist_get(list, key);
-
-    if (item == NULL) {
-        return NULL;
-    }
-
-    return item->value;
-}
-
-bool hashmap_has(Hashmap *hashmap, char *key)
-{
-    return hashmap_get(hashmap, key) != NULL;
-}
-
-bool hashmap_remove(Hashmap *hashmap, char *key)
-{
-    unsigned long int hash = hash_key(key, hashmap->size);
-    ItemList *list = hashmap__getItemList(hashmap, hash);
-
-    if (list == NULL) {
-        return false;
-    }
-
-    return itemlist_remove(list, key);
+    return listDelete(bucket, key, _hm_bucketComparatorFunction);
 }

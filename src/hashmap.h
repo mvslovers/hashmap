@@ -1,12 +1,23 @@
 #pragma once
 #include <stdbool.h>
-#include "itemlist.h"
+#include "list.h"
 
-typedef struct Hashmap_t
+// Alias for code readability purposes
+typedef List Bucket;
+
+// Hash map data structure
+typedef struct HashMap_T
 {
-    ItemList *lists;
+    List *buckets;
     size_t size;
-} Hashmap;
+} HashMap;
+
+// Generic key-value pair in the hash map
+typedef struct HashMapPair_T
+{
+    char * key;
+    void * data;
+} HashMapPair;
 
 /**
  * Creates a new hashmap.
@@ -15,18 +26,18 @@ typedef struct Hashmap_t
  *
  * @return The created hashmap.
  */
-Hashmap *hashmap_new(size_t size);
+HashMap *hashMapNew(size_t size);
 
 /**
  * Sets an entry in the hashmap, overriding any existing value.
  *
  * @param hashmap The hashmap to add to.
  * @param key The key of the entry to set.
- * @param value The value to set.
+ * @param data The data to set.
  *
  * @return True on success, false on failure.
  */
-bool hashmap_set(Hashmap * hashmap, char *key, char *value);
+bool hashMapSet(HashMap *hashmap, char *key, void *data);
 
 /**
  * Retrieves a value from the hashmap.
@@ -36,7 +47,7 @@ bool hashmap_set(Hashmap * hashmap, char *key, char *value);
  *
  * @return The value, or a null pointer if no value was found for the given key.
  */
-char *hashmap_get(Hashmap *hashmap, char *key);
+void *hashMapGet(HashMap *hashmap, char *key);
 
 /**
  * Checks if the hashmap contains a value for a given key.
@@ -46,7 +57,7 @@ char *hashmap_get(Hashmap *hashmap, char *key);
  *
  * @return True if a value was found for the given key, false otherwise.
  */
-bool hashmap_has(Hashmap * hashmap, char *key);
+bool hashMapHas(HashMap *hashmap, char *key);
 
 /**
  * Removes a value from the hashmap.
@@ -56,4 +67,4 @@ bool hashmap_has(Hashmap * hashmap, char *key);
  *
  * @return True on success, false on failure.
  */
-bool hashmap_remove(Hashmap * hashmap, char *key);
+bool hashMapDelete(HashMap *hashmap, char *key);
