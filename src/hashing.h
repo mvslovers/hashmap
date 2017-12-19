@@ -7,7 +7,7 @@
  *
  * @return The calculated digital root.
  */
-unsigned long int digital_root(unsigned long int hash);
+unsigned long int digitalRoot(unsigned long int hash);
 
 /**
  * Calculates the hash for a key, taking into account the size of the container.

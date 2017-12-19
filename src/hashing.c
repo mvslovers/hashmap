@@ -2,7 +2,7 @@
 #include <string.h>
 #include "hashing.h"
 
-unsigned long int digital_root(unsigned long int hash)
+unsigned long int digitalRoot(unsigned long int hash)
 {
     unsigned long int digitalRoot = 0;
 
@@ -23,9 +23,9 @@ unsigned long int hash_key(char * key, size_t size)
         hashsum += key[i];
     }
 
-    hashsum *= digital_root(hashsum);
-    hashsum += digital_root(hashsum);
-    hashsum /= digital_root(hashsum);
+    hashsum *= digitalRoot(hashsum);
+    hashsum += digitalRoot(hashsum);
+    hashsum /= digitalRoot(hashsum);
 
     if (hashsum < 0) {
         hashsum *= size * -1;
