@@ -1,5 +1,6 @@
-#pragma once
-#include <stdbool.h>
+#ifndef __HASHMAP_H__
+#define __HASHMAP_H__
+
 #include "list.h"
 
 // Alias for code readability purposes
@@ -68,3 +69,5 @@ bool hashMapHas(HashMap *hashmap, char *key);
  * @return True on success, false on failure.
  */
 bool hashMapDelete(HashMap *hashmap, char *key);
+
+#endif //__HASHMAP_H__

@@ -18,8 +18,9 @@ unsigned long int hashKey(char *key)
 {
     size_t length = strlen(key);
     unsigned int hashsum = 0;
+    unsigned int i;
 
-    for (unsigned int i = 0; i < length; ++i){
+    for (i = 0; i < length; ++i){
         hashsum += key[i];
     }
 

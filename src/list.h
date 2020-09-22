@@ -1,5 +1,14 @@
-#pragma once
-#include <stdbool.h>
+#ifndef __LIST_H__
+#define __LIST_H__
+
+#ifndef bool
+#define bool int
+#endif
+
+#ifndef true
+#define true  1
+#define false 0
+#endif
 
 /**
  * Generic double-linked list node.
@@ -72,3 +81,5 @@ void *listSearch(List *list, void * compare, ListComparatorCb callback);
  * @return True on successful deletion, false otherwise.
  */
 bool listDelete(List *list, void * compare, ListComparatorCb callback);
+
+#endif //__LIST_H__

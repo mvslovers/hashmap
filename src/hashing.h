@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __HASHING_H__
+#define __HASHING_H__
 
 /**
  * Calculates the digital root of a hash key.
@@ -18,3 +19,5 @@ unsigned long int digitalRoot(unsigned long int hash);
  * @return The generate hash.
  */
 unsigned long int hashKey(char *key);
+
+#endif //__HASHING_H__

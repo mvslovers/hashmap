@@ -1,0 +1,4 @@
+
+A simple generic hashmap, and double linked list, implementation in C.
+
+grabbed from https://github.com/mecha/hashmap

@@ -2,6 +2,7 @@
 
 A simple generic hashmap, and double linked list, implementation in C.
 
+*This fork is a port that is providing a JCC compatible version of hashmaps.*
 ## Usage
 
 All hash map API functions are prefixed as `hashMap*`.
